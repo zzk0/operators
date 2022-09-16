@@ -38,9 +38,9 @@ class Benchmark {
 };
 
 /**
- * TODO: fix this MACRO, it has bug: when a MatmulAlgorithm is not used, registration will fail
- * This MACRO should be used in source file
- * otherwises, multiple symbol definition would happen
+ * TODO: fix this MACRO, it has bug: when a MatmulAlgorithm is not used,
+ * registration will fail This MACRO should be used in source file otherwises,
+ * multiple symbol definition would happen
  */
 #define REGISTER_MATMUL(name, MatmulAlgo)                         \
   namespace {                                                     \

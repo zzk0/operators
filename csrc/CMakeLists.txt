@@ -5,6 +5,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(matmul
     benchmark/benchmark.cpp
     matmul/naive_matmul.cpp
+    matmul/naive_matmul1.cpp
+    matmul/naive_matmul2.cpp
     matmul/blis_matmul.cpp
 )
 

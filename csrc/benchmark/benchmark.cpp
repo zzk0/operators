@@ -5,12 +5,15 @@
 #include <random>
 
 #include "haswell/blis.h"
+#include "tabulate/table.hpp"
 
 #include "benchmark.hpp"
 #include "matmul/blis_matmul.hpp"
 #include "matmul/naive_matmul.hpp"
-#include "tools/progress_bar.hpp"
+#include "matmul/naive_matmul1.hpp"
+#include "matmul/naive_matmul2.hpp"
 #include "tools/float_comparison.hpp"
+#include "tools/progress_bar.hpp"
 
 namespace {
 
@@ -27,6 +30,8 @@ void PrintMatrix(float* mat, int m, int n) {
 }  // namespace
 
 void Benchmark::Launch(int m, int k, int n) {
+  std::cout << "Running benchmark: " << std::endl;
+
   constexpr int experiment_times = 20;
   constexpr int NANO_PER_MILLI = 1000000;
 
@@ -65,7 +70,7 @@ void Benchmark::Launch(int m, int k, int n) {
       PrintProgress(static_cast<double>(algo_id) /
                         GetMatmulAlgorithmMap().size() +
                     1.0 / GetMatmulAlgorithmMap().size() *
-                    static_cast<double>(i + 1) / experiment_times);
+                        static_cast<double>(i + 1) / experiment_times);
     }
 
     algo_time_cost.emplace_back(
@@ -77,11 +82,25 @@ void Benchmark::Launch(int m, int k, int n) {
   }
 
   std::sort(algo_time_cost.begin(), algo_time_cost.end());
-  std::cout << "\n\nalgorithm\t\taverage\t\tmin\t\tmax\n";
+
+  tabulate::Table table;
+  table.add_row(
+      {"algorithm name", "average cost(ms)", "min cost(ms)", "max cost(ms)"});
   for (const auto& t : algo_time_cost) {
-    std::cout << std::get<3>(t) << "\t\t" << std::get<0>(t) << "\t\t"
-              << std::get<1>(t) << "\t\t" << std::get<2>(t) << std::endl;
+    table.add_row({std::get<3>(t),
+                   std::to_string(std::get<0>(t)),
+                   std::to_string(std::get<1>(t)),
+                   std::to_string(std::get<2>(t))});
   }
+
+  // Color header cells
+  for (size_t i = 0; i < table[0].size(); ++i) {
+    table[0][i]
+        .format()
+        .font_color(tabulate::Color::green)
+        .font_style({tabulate::FontStyle::bold});
+  }
+  std::cout << "\n\n" << table << std::endl;
 }
 
 void Benchmark::Register(const std::string& name,
@@ -133,5 +152,7 @@ void Benchmark::MatrixMatmulForValidation(
     int m, int k, int n, float* a, float* b, float* out) {
   NaiveMatmul algo;
   BlisMatmul algo1;
+  NaiveMatmul1 algo2;
+  NaiveMatmul2 algo3;
   algo1.Matmul(m, k, n, a, b, out);
 }

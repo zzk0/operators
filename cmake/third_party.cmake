@@ -1,12 +1,14 @@
 find_package(Threads)
 
 include(blis)
+include(tabulate)
 
 set(third_party_libs
-    ${ABSL_STATIC_LIBRARIES}
+    ${BLIS_STATIC_LIBRARIES}
     Threads::Threads)
 
 set(third_party_dependencies
-    blis)
+    blis
+    tabulate)
 
 add_custom_target(prepare_third_party ALL DEPENDS ${third_party_dependencies})
