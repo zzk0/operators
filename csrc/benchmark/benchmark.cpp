@@ -10,6 +10,21 @@
 #include "matmul/blis_matmul.hpp"
 #include "matmul/naive_matmul.hpp"
 #include "tools/progress_bar.hpp"
+#include "tools/float_comparison.hpp"
+
+namespace {
+
+void PrintMatrix(float* mat, int m, int n) {
+  std::cout << std::endl;
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << mat[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+}  // namespace
 
 void Benchmark::Launch(int m, int k, int n) {
   constexpr int experiment_times = 20;
@@ -36,10 +51,13 @@ void Benchmark::Launch(int m, int k, int n) {
       algo->Matmul(m, k, n, a.data(), b.data(), c.data());
       int64_t duration = StopClock();
 
-      // if (CompareMatrices(m, n, c.data(), ans.data())) {
-      //   std::cerr << "Wrong Answer" << std::endl;
-      //   exit(-1);
-      // }
+      if (!CompareMatrices(m, n, c.data(), ans.data())) {
+        std::cout << name << std::endl;
+        PrintMatrix(c.data(), m, n);
+        PrintMatrix(ans.data(), m, n);
+        std::cerr << "Wrong Answer" << std::endl;
+        exit(-1);
+      }
       total += duration;
       min_cost = std::min(min_cost, duration);
       max_cost = std::max(max_cost, duration);
@@ -103,7 +121,8 @@ std::vector<float> Benchmark::GetRandomMatrix(int m, int n) {
 
 bool Benchmark::CompareMatrices(int m, int n, float* a, float* b) {
   for (int i = 0; i < m * n; ++i) {
-    if (a[i] != b[i]) {
+    if (!FloatEqual(a[i], b[i], 0.01)) {
+      std::cout << a[i] << " " << b[i] << std::endl;
       return false;
     }
   }

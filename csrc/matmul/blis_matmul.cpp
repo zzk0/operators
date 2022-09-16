@@ -3,14 +3,16 @@
 #include "blis_matmul.hpp"
 
 void BlisMatmul::Matmul(int m, int k, int n, float* a, float* b, float* out) {
-  float alpha = 1.0;
-  float beta = 1.0;
-  inc_t rs_a = 1;
-  inc_t cs_a = m;
-  inc_t rs_b = 1;
-  inc_t cs_b = k;
-  inc_t rs_c = 1;
-  inc_t cs_c = m;
+  float alpha = 1.0f;
+  float beta = 0.0f;
+  inc_t rs_a = k;
+  inc_t cs_a = 1;
+  inc_t rs_b = n;
+  inc_t cs_b = 1;
+  inc_t rs_c = n;
+  inc_t cs_c = 1;
+
+  // row-major (rs > 1, cs = 1), column-major (rs = 1, cs > 1)
   bli_sgemm(BLIS_NO_TRANSPOSE,
             BLIS_NO_TRANSPOSE,
             m,
