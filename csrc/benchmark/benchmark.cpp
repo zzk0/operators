@@ -2,17 +2,22 @@
 #include <cfloat>
 #include <chrono>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
+#include <memory>
+#include <ostream>
 #include <random>
 
-#include "haswell/blis.h"
 #include "tabulate/table.hpp"
+#include "tabulate/markdown_exporter.hpp"
 
 #include "benchmark.hpp"
 #include "matmul/blis_matmul.hpp"
 #include "matmul/naive_matmul.hpp"
 #include "tools/float_comparison.hpp"
 #include "tools/progress_bar.hpp"
+
+#define SPEED_TEST_RESULT_FILE "speed_test.md"
 
 namespace {
 
@@ -24,6 +29,11 @@ void PrintMatrix(float* mat, int m, int n) {
     }
     std::cout << std::endl;
   }
+}
+
+void WriteToFile(const std::string& filename, const std::string& content) {
+  const auto& fout = std::make_unique<std::ofstream>(filename);
+  *fout << content << "\n";
 }
 
 }  // namespace
@@ -114,6 +124,10 @@ void Benchmark::Launch(int m, int k, int n) {
         .font_style({tabulate::FontStyle::bold});
   }
   std::cout << "\n\n" << table << std::endl;
+
+  tabulate::MarkdownExporter exporter;
+  auto markdown = exporter.dump(table);
+  WriteToFile(SPEED_TEST_RESULT_FILE, markdown);
 }
 
 void Benchmark::Register(const std::string& name,
