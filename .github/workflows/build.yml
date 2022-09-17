@@ -13,11 +13,26 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build
       run: |
+        pwd
         mkdir build
         cd build
         cmake ..
         make -j$(nproc)
     - name: Test
       run: |
+        pwd
         cd build
         ./csrc/benchmark 300 400 500
+        TEST_RESULT=$(cat << EOF
+        $(cat speed_test.md)
+        EOF
+        )
+        echo "::set-output name=content::$TEST_RESULT"
+      id: speed_test
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v1
+      with:
+        message: |
+          ${{ steps.speed_test.outputs.content }}
+        pr_number: 1
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

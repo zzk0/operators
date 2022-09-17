@@ -1,5 +1,7 @@
 # GEMM
 
+![workflow](https://github.com/zzk0/gemm/actions/workflows/build.yml/badge.svg)
+
 # Build && Run
 
 To build and run the project:
