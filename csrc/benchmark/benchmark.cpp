@@ -5,7 +5,6 @@
 #include <iostream>
 #include <random>
 
-#include "haswell/blis.h"
 #include "tabulate/table.hpp"
 
 #include "benchmark.hpp"
