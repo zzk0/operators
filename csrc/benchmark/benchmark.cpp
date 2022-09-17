@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cfloat>
 #include <chrono>
 #include <cstdint>
 #include <iostream>
@@ -10,8 +11,6 @@
 #include "benchmark.hpp"
 #include "matmul/blis_matmul.hpp"
 #include "matmul/naive_matmul.hpp"
-#include "matmul/naive_matmul1.hpp"
-#include "matmul/naive_matmul2.hpp"
 #include "tools/float_comparison.hpp"
 #include "tools/progress_bar.hpp"
 
@@ -35,15 +34,15 @@ void Benchmark::Launch(int m, int k, int n) {
   constexpr int experiment_times = 20;
   constexpr int NANO_PER_MILLI = 1000000;
 
-  std::vector<std::tuple<float, float, float, std::string>> algo_time_cost;
+  std::vector<std::tuple<float, float, float, std::string, bool>> result;
 
   int algo_id = 0;
   PrintProgress(0.0);
   for (const auto& it : GetMatmulAlgorithmMap()) {
     const std::string& name = it.first;
     const std::shared_ptr<MatmulAlgorithm>& algo = it.second;
-
     int64_t total = 0, min_cost = INT64_MAX, max_cost = INT64_MIN;
+    bool result_correct = true;
     for (int i = 0; i < experiment_times; ++i) {
       std::vector<float> a = GetRandomMatrix(m, k);
       std::vector<float> b = GetRandomMatrix(k, n);
@@ -57,11 +56,8 @@ void Benchmark::Launch(int m, int k, int n) {
       int64_t duration = StopClock();
 
       if (!CompareMatrices(m, n, c.data(), ans.data())) {
-        std::cout << name << std::endl;
-        PrintMatrix(c.data(), m, n);
-        PrintMatrix(ans.data(), m, n);
-        std::cerr << "Wrong Answer" << std::endl;
-        exit(-1);
+        result_correct = false;
+        break;
       }
       total += duration;
       min_cost = std::min(min_cost, duration);
@@ -73,24 +69,41 @@ void Benchmark::Launch(int m, int k, int n) {
                         static_cast<double>(i + 1) / experiment_times);
     }
 
-    algo_time_cost.emplace_back(
-        static_cast<float>(total) / NANO_PER_MILLI / experiment_times,
-        static_cast<float>(min_cost) / NANO_PER_MILLI,
-        static_cast<float>(max_cost) / NANO_PER_MILLI,
-        name);
+    if (result_correct) {
+      result.emplace_back(
+          static_cast<float>(total) / NANO_PER_MILLI / experiment_times,
+          static_cast<float>(min_cost) / NANO_PER_MILLI,
+          static_cast<float>(max_cost) / NANO_PER_MILLI,
+          name,
+          result_correct);
+    } else {
+      result.emplace_back(FLT_MAX, FLT_MAX, FLT_MAX, name, result_correct);
+    }
     algo_id += 1;
   }
 
-  std::sort(algo_time_cost.begin(), algo_time_cost.end());
+  std::sort(result.begin(), result.end());
 
   tabulate::Table table;
-  table.add_row(
-      {"algorithm name", "average cost(ms)", "min cost(ms)", "max cost(ms)"});
-  for (const auto& t : algo_time_cost) {
-    table.add_row({std::get<3>(t),
-                   std::to_string(std::get<0>(t)),
-                   std::to_string(std::get<1>(t)),
-                   std::to_string(std::get<2>(t))});
+  table.add_row({"algorithm name",
+                 "correctness",
+                 "average cost(ms)",
+                 "min cost(ms)",
+                 "max cost(ms)"});
+  for (const auto& t : result) {
+    if (std::get<4>(t)) {
+      table.add_row({std::get<3>(t),
+                     std::to_string(std::get<4>(t)),
+                     std::to_string(std::get<0>(t)),
+                     std::to_string(std::get<1>(t)),
+                     std::to_string(std::get<2>(t))});
+    } else {
+      table.add_row({std::get<3>(t),
+                     std::to_string(std::get<4>(t)),
+                     "NAN",
+                     "NAN",
+                     "NAN"});
+    }
   }
 
   // Color header cells
@@ -140,8 +153,7 @@ std::vector<float> Benchmark::GetRandomMatrix(int m, int n) {
 
 bool Benchmark::CompareMatrices(int m, int n, float* a, float* b) {
   for (int i = 0; i < m * n; ++i) {
-    if (!FloatEqual(a[i], b[i], 0.01)) {
-      std::cout << a[i] << " " << b[i] << std::endl;
+    if (!FloatEqual(a[i], b[i], 0.0001)) {
       return false;
     }
   }
@@ -150,9 +162,6 @@ bool Benchmark::CompareMatrices(int m, int n, float* a, float* b) {
 
 void Benchmark::MatrixMatmulForValidation(
     int m, int k, int n, float* a, float* b, float* out) {
-  NaiveMatmul algo;
-  BlisMatmul algo1;
-  NaiveMatmul1 algo2;
-  NaiveMatmul2 algo3;
-  algo1.Matmul(m, k, n, a, b, out);
+  BlisMatmul algo;
+  algo.Matmul(m, k, n, a, b, out);
 }

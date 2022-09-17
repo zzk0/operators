@@ -49,7 +49,7 @@ class Benchmark {
       Benchmark::Register(#name, std::make_shared<MatmulAlgo>()); \
     }                                                             \
   };                                                              \
-  static MatmulAlgo##name algo{};                                 \
+  static MatmulAlgo##name algo##name{};                           \
   }
 
 #endif /* CSRC_BENCHMARK_BENCHMARK */
