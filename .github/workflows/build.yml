@@ -25,6 +25,20 @@ jobs:
         cd build
         cmake ..
         make -j$(nproc)
+    - name: CPU Info
+      run: |
+        pwd
+        cp scripts/cpuinfo.sh build
+        cd build
+        bash cpuinfo.sh
+        CPU_INFO=$(cat << EOF
+        CPU Info:
+        $(cat cpuinfo.txt)
+        EOF
+        )
+        echo "CPU_INFO<<EOF" >> $GITHUB_ENV
+        echo "$CPU_INFO" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
     - name: Test
       run: |
         pwd
@@ -45,6 +59,7 @@ jobs:
         message: |
           time: ${{ steps.speed_test.outputs.current }}
           id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         pr_number: 1
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,5 +70,6 @@ jobs:
         message: |
           time: ${{ steps.speed_test.outputs.current }}
           id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
