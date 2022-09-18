@@ -5,7 +5,9 @@ set -exo
 output_file=$1
 
 echo '## CPU' > $output_file
+echo '```' >> $output_file
 lscpu >> $output_file
+echo '```' >> $output_file
 
 echo '## Cache' >> $output_file
 echo '```' >> $output_file
@@ -13,7 +15,9 @@ echo '```' >> $output_file
 echo '```' >> $output_file
 
 echo '## Memory' >> $output_file
+echo '```' >> $output_file
 free -mh >> $output_file
+echo '```' >> $output_file
 
 echo '## Peak Performance' >> $output_file
 echo '```' >> $output_file
