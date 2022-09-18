@@ -45,6 +45,7 @@ jobs:
         cd build
         ./csrc/benchmark 300 400 500
         TEST_RESULT=$(cat << EOF
+        Speed Test Result:
         $(cat speed_test.md)
         EOF
         )
