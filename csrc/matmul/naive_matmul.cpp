@@ -83,3 +83,16 @@ class NaiveMatmul3 : public MatmulAlgorithm {
 };
 
 REGISTER_MATMUL(naive_matmul_loop_unrool, NaiveMatmul3);
+
+/**
+ * 
+ */
+class NaiveMatmul4 : public MatmulAlgorithm {
+ public:
+  virtual void Matmul(int m, int k, int n, float* a, float* b, float* out) {
+
+  }
+};
+
+REGISTER_MATMUL(naive_matmul_optimized, NaiveMatmul4);
+
