@@ -2,6 +2,7 @@ find_package(Threads)
 
 include(blis)
 include(tabulate)
+include(cpufp)
 
 set(third_party_libs
     ${BLIS_STATIC_LIBRARIES}
