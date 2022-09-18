@@ -30,7 +30,7 @@ jobs:
         pwd
         cp scripts/cpuinfo.sh build
         cd build
-        bash cpuinfo.sh
+        bash cpuinfo.sh cpuinfo.txt
         CPU_INFO=$(cat << EOF
         $(cat cpuinfo.txt)
         EOF
