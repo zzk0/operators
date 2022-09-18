@@ -1,5 +1,7 @@
 # GEMM
 
+Single Floating Point Row-Major Matrix Multiplication.
+
 # Build && Run
 
 To build and run the project:

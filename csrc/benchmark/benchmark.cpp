@@ -93,13 +93,13 @@ void Benchmark::Launch(int m, int k, int n) {
   for (const auto& t : result) {
     if (std::get<4>(t)) {
       table.add_row({std::get<3>(t),
-                     std::to_string(std::get<4>(t)),
+                     "Yes",
                      std::to_string(std::get<0>(t)),
                      std::to_string(std::get<1>(t)),
                      std::to_string(std::get<2>(t))});
     } else {
       table.add_row({std::get<3>(t),
-                     std::to_string(std::get<4>(t)),
+                     "No",
                      "NAN",
                      "NAN",
                      "NAN"});
