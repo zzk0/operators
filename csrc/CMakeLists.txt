@@ -2,6 +2,9 @@ project(benchmark CXX C)
 include(ExternalProject)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+option(OPTIMIZE_LEVEL "gcc optimization level" "-O0")
+add_compile_options(${OPTIMIZE_LEVEL})
+
 file(GLOB_RECURSE matmul_files ${PROJECT_SOURCE_DIR}/matmul/*.cpp)
 add_library(matmul
     benchmark/benchmark.cpp

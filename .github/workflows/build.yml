@@ -23,7 +23,7 @@ jobs:
         pwd
         mkdir build
         cd build
-        cmake ..
+        cmake .. -DOPTIMIZE_LEVEL="-O2"
         make -j$(nproc)
     - name: CPU Info
       run: |

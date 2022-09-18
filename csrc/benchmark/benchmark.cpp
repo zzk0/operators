@@ -8,8 +8,8 @@
 #include <ostream>
 #include <random>
 
-#include "tabulate/table.hpp"
 #include "tabulate/markdown_exporter.hpp"
+#include "tabulate/table.hpp"
 
 #include "benchmark.hpp"
 #include "matmul/blis_matmul.hpp"
@@ -94,9 +94,13 @@ void Benchmark::Launch(int m, int k, int n) {
 
   std::sort(result.begin(), result.end());
 
+  float gflopms = 2.0f * static_cast<float>(m) * static_cast<float>(k) *
+                 static_cast<float>(n) * 1.0e-6f;
+
   tabulate::Table table;
   table.add_row({"algorithm name",
                  "correctness",
+                 "GFLOPS",
                  "average cost(ms)",
                  "min cost(ms)",
                  "max cost(ms)"});
@@ -104,15 +108,12 @@ void Benchmark::Launch(int m, int k, int n) {
     if (std::get<4>(t)) {
       table.add_row({std::get<3>(t),
                      "Yes",
+                     std::to_string(gflopms / std::get<0>(t)),
                      std::to_string(std::get<0>(t)),
                      std::to_string(std::get<1>(t)),
                      std::to_string(std::get<2>(t))});
     } else {
-      table.add_row({std::get<3>(t),
-                     "No",
-                     "NAN",
-                     "NAN",
-                     "NAN"});
+      table.add_row({std::get<3>(t), "No", "NAN", "NAN", "NAN", "NAN"});
     }
   }
 
