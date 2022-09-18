@@ -63,6 +63,7 @@ jobs:
         pr_number: 1
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Comment PR
+      if: github.event_name == 'pull_request'
       uses: thollander/actions-comment-pull-request@v1
       with:
         message: |
