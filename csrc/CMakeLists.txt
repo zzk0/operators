@@ -16,3 +16,5 @@ add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${matmul_lib} ${third_party_libs})
 
 add_dependencies(matmul prepare_third_party)
+
+add_executable(cache_info tools/cache_info.cpp)

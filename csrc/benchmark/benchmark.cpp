@@ -127,7 +127,7 @@ void Benchmark::Launch(int m, int k, int n) {
   std::cout << "\n\n" << table << std::endl;
 
   tabulate::MarkdownExporter exporter;
-  auto markdown = exporter.dump(table);
+  const auto& markdown = exporter.dump(table);
   WriteToFile(SPEED_TEST_RESULT_FILE, markdown);
 }
 

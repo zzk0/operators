@@ -32,7 +32,6 @@ jobs:
         cd build
         bash cpuinfo.sh
         CPU_INFO=$(cat << EOF
-        CPU Info:
         $(cat cpuinfo.txt)
         EOF
         )
