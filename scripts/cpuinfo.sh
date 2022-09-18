@@ -10,9 +10,7 @@ lscpu >> $output_file
 echo '```' >> $output_file
 
 echo '## Cache' >> $output_file
-echo '```' >> $output_file
 ./csrc/cache_info >> $output_file
-echo '```' >> $output_file
 
 echo '## Memory' >> $output_file
 echo '```' >> $output_file
