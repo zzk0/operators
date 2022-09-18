@@ -57,8 +57,7 @@ jobs:
       uses: thollander/actions-comment-pull-request@v1
       with:
         message: |
-          time: ${{ steps.speed_test.outputs.current }}
-          id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          [Github Actions: ${{ steps.speed_test.outputs.current }}](https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ github.run_id }}/)
           ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         pr_number: 1
@@ -67,8 +66,7 @@ jobs:
       uses: thollander/actions-comment-pull-request@v1
       with:
         message: |
-          time: ${{ steps.speed_test.outputs.current }}
-          id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          [Github Actions: ${{ steps.speed_test.outputs.current }}](https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ github.run_id }}/)
           ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
