@@ -1,4 +1,4 @@
-#include "haswell/blis.h"
+#include "blis/blis.h"
 
 #include "blis_matmul.hpp"
 

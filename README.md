@@ -1,5 +1,7 @@
 # GEMM
 
+![workflow](https://github.com/zzk0/gemm/actions/workflows/build.yml/badge.svg)
+
 Single Floating Point Row-Major Matrix Multiplication.
 
 # Build && Run
