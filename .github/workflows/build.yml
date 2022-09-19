@@ -51,14 +51,13 @@ jobs:
         echo "TEST_RESULT<<EOF" >> $GITHUB_ENV
         echo "$TEST_RESULT" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
-        echo "::set-output name=current::$(TZ=Asia/Shanghai date)"
+        echo "::set-output name=current::$(TZ=Asia/Shanghai date +"%Y/%m/%d %H:%M.%S")"
       id: speed_test
     - name: Comment ISSUE
       uses: thollander/actions-comment-pull-request@v1
       with:
         message: |
-          time: ${{ steps.speed_test.outputs.current }}
-          id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          [Github Actions: ${{ steps.speed_test.outputs.current }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         pr_number: 1
@@ -68,8 +67,7 @@ jobs:
       uses: thollander/actions-comment-pull-request@v1
       with:
         message: |
-          time: ${{ steps.speed_test.outputs.current }}
-          id_number_attempt: ${{ github.run_id }}_${{ github.run_number }}_${{ github.run_attempt }}
+          [Github Actions: ${{ steps.speed_test.outputs.current }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           ${{ env.CPU_INFO }}
           ${{ env.TEST_RESULT }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
