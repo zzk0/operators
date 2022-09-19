@@ -4,7 +4,7 @@ include(ExternalProject)
 set(TABULATE_ROOT_DIR ${THIRD_PARTY_DIR}/tabulate)
 set(TABULATE_INCLUDE_DIR ${THIRD_PARTY_DIR}/tabulate/src/tabulate/include)
 
-set(TABULATE_URL https://github.com/p-ranav/tabulate/archive/refs/tags/v1.4.zip)
+set(TABULATE_URL ${GITHUB_PROXY}https://github.com/p-ranav/tabulate/archive/refs/tags/v1.4.zip)
 
 include_directories(${TABULATE_INCLUDE_DIR})
 

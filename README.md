@@ -11,16 +11,9 @@ To build and run the project:
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake .. -DGITHUB_PROXY_ENABLE=ON  # set ON if you need a proxy server
 make -j8
 ./csrc/benchmark 300 400 500
-```
-
-CMake will download dependency source code from Github, configure a proxy server as needed.
-
-```
-git config --global http.proxy http://127.0.0.1:1080
-git config --global https.proxy https://127.0.0.1:1080
 ```
 
 # Extension
