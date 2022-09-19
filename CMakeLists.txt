@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.18)
 project(gemm CXX C)
 
+# custom option
+option(GITHUB_PROXY_ENABLE "wether enable github proxy or not, many thanks to https://ghproxy.com/" OFF)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -10,7 +13,9 @@ set(CMAKE_C_STANDARD   11 CACHE STRING "The C standard whose features are reques
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-
+if (GITHUB_PROXY_ENABLE)
+    set(GITHUB_PROXY https://ghproxy.com/)
+endif()
 set(THIRD_PARTY_DIR "${PROJECT_BINARY_DIR}/third_party")
 set(cmake_dir ${PROJECT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${cmake_dir}/third_party)

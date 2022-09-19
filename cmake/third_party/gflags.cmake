@@ -3,7 +3,7 @@ include(ExternalProject)
 set(GFLAGS_ROOT_DIR ${THIRD_PARTY_DIR}/gflags)
 set(GFLAGS_INCLUDE_DIR ${GFLAGS_ROOT_DIR}/src/gflags-build/include)
 set(GFLAGS_LIBRARY_DIR ${GFLAGS_ROOT_DIR}/src/gflags-build/lib)
-set(GFLAGS_URL https://github.com/gflags/gflags/archive/refs/tags/v2.2.2.zip)
+set(GFLAGS_URL ${GITHUB_PROXY}https://github.com/gflags/gflags/archive/refs/tags/v2.2.2.zip)
 
 include_directories(${GFLAGS_INCLUDE_DIR})
 set(GFLAGS_LIBRARY_NAMES
