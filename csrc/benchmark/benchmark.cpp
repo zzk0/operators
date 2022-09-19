@@ -191,7 +191,7 @@ void Benchmark::Launch1(int start, int end, int stride) {
       if (CompareMatrices(m, n, c.data(), ans.data())) {
         algorithm_cost_time[name].push_back(
             "GFLOPS: " + std::to_string(gflops / duration) +
-            " elapse: " + std::to_string(duration / NANO_PER_MILLI) + "ms");
+            " elapse: " + std::to_string(static_cast<float>(duration) / NANO_PER_MILLI) + "ms");
       } else {
         algorithm_cost_time[name].push_back("NAN");
       }
