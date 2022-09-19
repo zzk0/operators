@@ -1,5 +1,6 @@
-find_package(Threads)
+cmake_policy(SET CMP0135 NEW)
 
+find_package(Threads)
 include(blis)
 include(tabulate)
 include(cpufp)
