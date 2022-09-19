@@ -18,5 +18,6 @@ int main(int argc, char** argv) {
 
   Benchmark benchmark;
   benchmark.Launch(m, k, n);
+  benchmark.Launch1(100, 1000, 100);
   return 0;
 }

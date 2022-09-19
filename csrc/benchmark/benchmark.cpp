@@ -18,31 +18,64 @@
 #include "tools/progress_bar.hpp"
 
 #define SPEED_TEST_RESULT_FILE "speed_test.md"
+#define SPEED_TEST_SHAPE_RESULT_FILE "speed_test_shape.md"
+#define NANO_PER_MILLI 1000000
 
 namespace {
 
-void PrintMatrix(float* mat, int m, int n) {
-  std::cout << std::endl;
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < n; ++j) {
-      std::cout << mat[i * n + j] << " ";
-    }
-    std::cout << std::endl;
-  }
-}
 
 void WriteToFile(const std::string& filename, const std::string& content) {
   const auto& fout = std::make_unique<std::ofstream>(filename);
   *fout << content << "\n";
 }
 
+void PrintTable(const std::unordered_map<std::string, std::vector<std::string>>&
+                    algorithm_cost_time,
+                int start,
+                int end,
+                int stride) {
+  tabulate::Table table;
+
+  std::vector<variant<std::string, const char*, tabulate::Table>> row;
+  row.emplace_back("algorithm name / matrix size");
+  for (int size = start; size <= end; size += stride) {
+    row.emplace_back(std::to_string(size));
+  }
+  table.add_row(row);
+
+  for (const auto& it : algorithm_cost_time) {
+    row.clear();
+    row.emplace_back(it.first);
+    for (const auto& res : it.second) {
+      row.emplace_back(res);
+    }
+    table.add_row(row);
+  }
+
+  // Color header cells
+  for (size_t i = 1; i < table[0].size(); ++i) {
+    table[0][i]
+        .format()
+        .font_color(tabulate::Color::green)
+        .font_style({tabulate::FontStyle::bold});
+  }
+  for (size_t i = 1; i <= algorithm_cost_time.size(); ++i) {
+    table[i][0]
+        .format()
+        .font_color(tabulate::Color::blue)
+        .font_style({tabulate::FontStyle::bold});
+  }
+
+  tabulate::MarkdownExporter exporter;
+  const auto& markdown = exporter.dump(table);
+  WriteToFile(SPEED_TEST_SHAPE_RESULT_FILE, markdown);
+}
 }  // namespace
 
 void Benchmark::Launch(int m, int k, int n) {
   std::cout << "Running benchmark: " << std::endl;
 
   constexpr int experiment_times = 20;
-  constexpr int NANO_PER_MILLI = 1000000;
 
   std::vector<std::tuple<float, float, float, std::string, bool>> result;
 
@@ -129,6 +162,46 @@ void Benchmark::Launch(int m, int k, int n) {
   tabulate::MarkdownExporter exporter;
   const auto& markdown = exporter.dump(table);
   WriteToFile(SPEED_TEST_RESULT_FILE, markdown);
+}
+
+void Benchmark::Launch1(int start, int end, int stride) {
+  std::cout << "Running benchmark: " << std::endl;
+
+  std::unordered_map<std::string, std::vector<std::string>> algorithm_cost_time;
+
+  PrintProgress(0.0);
+  for (int size = start; size <= end; size += stride) {
+    int m = size, n = size, k = size;
+    std::vector<float> a = GetRandomMatrix(m, k);
+    std::vector<float> b = GetRandomMatrix(k, n);
+    std::vector<float> ans(m * n, 0.0f);
+    MatrixMatmulForValidation(m, k, n, a.data(), b.data(), ans.data());
+    float gflops = 2.0f * static_cast<float>(m) * static_cast<float>(k) *
+                   static_cast<float>(n);
+    for (const auto& it : GetMatmulAlgorithmMap()) {
+      std::vector<float> c(m * n, 0.0f);
+      const std::string& name = it.first;
+      const std::shared_ptr<MatmulAlgorithm>& algo = it.second;
+
+      // TODO: add timeout
+      StartClock();
+      algo->Matmul(m, k, n, a.data(), b.data(), c.data());
+      int64_t duration = StopClock();
+
+      if (CompareMatrices(m, n, c.data(), ans.data())) {
+        algorithm_cost_time[name].push_back(
+            "GFLOPS: " + std::to_string(gflops / duration) +
+            " elapse: " + std::to_string(duration / NANO_PER_MILLI) + "ms");
+      } else {
+        algorithm_cost_time[name].push_back("NAN");
+      }
+    }
+    PrintProgress(static_cast<float>(size - start) /
+                  static_cast<float>(end - start));
+  }
+  PrintProgress(1.0);
+  std::cout << std::endl;
+  PrintTable(algorithm_cost_time, start, end, stride);
 }
 
 void Benchmark::Register(const std::string& name,

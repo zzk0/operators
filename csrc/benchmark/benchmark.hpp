@@ -13,7 +13,8 @@ class Benchmark {
   Benchmark() {}
   ~Benchmark() {}
 
-  void Launch(int m = 100, int k = 300, int n = 200);
+  void Launch(int m, int k, int n);
+  void Launch1(int start, int end, int stride);
 
   static void Register(const std::string& name,
                        const std::shared_ptr<MatmulAlgorithm>& algo);
@@ -38,8 +39,7 @@ class Benchmark {
 };
 
 /**
- * TODO: fix this MACRO, it has bug: when a MatmulAlgorithm is not used,
- * registration will fail This MACRO should be used in source file otherwises,
+ * This MACRO should be used in source file, otherwises
  * multiple symbol definition would happen
  */
 #define REGISTER_MATMUL(name, MatmulAlgo)                         \

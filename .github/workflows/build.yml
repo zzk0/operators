@@ -23,7 +23,7 @@ jobs:
         pwd
         mkdir build
         cd build
-        cmake .. -DOPTIMIZE_LEVEL="-O2"
+        cmake ..
         make -j$(nproc)
     - name: CPU Info
       run: |
@@ -50,6 +50,14 @@ jobs:
         )
         echo "TEST_RESULT<<EOF" >> $GITHUB_ENV
         echo "$TEST_RESULT" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+        TEST_SHAPE_RESULT=$(cat << EOF
+        ## Speed Shape Test
+        $(cat speed_test_shape.md)
+        EOF
+        )
+        echo "TEST_SHAPE_RESULT<<EOF" >> $GITHUB_ENV
+        echo "$TEST_SHAPE_RESULT" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
         echo "::set-output name=current::$(TZ=Asia/Shanghai date)"
       id: speed_test

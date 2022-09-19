@@ -8,8 +8,6 @@ set(CPUFP_INSTALL cd ${CPUFP_ROOT_DIR}/src/cpufp && mv ${CPUFP_EXECUTABLE} ${PRO
 set(CPUFP_URL https://github.com/zzk0/cpufp)
 set(CPUFP_TAG master)
 
-include_directories(${CPUFP_INCLUDE_DIR})
-
 ExternalProject_Add(
     cpufp
     GIT_REPOSITORY ${CPUFP_URL}
