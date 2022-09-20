@@ -1,3 +1,4 @@
+#include <immintrin.h>
 #include <pmmintrin.h>
 #include <xmmintrin.h>
 #include <x86intrin.h>
@@ -20,7 +21,7 @@ void NaiveMatmul::Matmul(int m, int k, int n, float* a, float* b, float* out) {
   }
 }
 
-// REGISTER_MATMUL(naive_matmul, NaiveMatmul);
+REGISTER_MATMUL(naive_matmul, NaiveMatmul);
 
 /**
  * CSAPP: Use temporary accumulator
@@ -42,7 +43,7 @@ class NaiveMatmul1 : public MatmulAlgorithm {
   }
 };
 
-// REGISTER_MATMUL(naive_matmul_temporary_variable, NaiveMatmul1);
+REGISTER_MATMUL(naive_matmul_temporary_variable, NaiveMatmul1);
 
 
 /**
@@ -71,7 +72,7 @@ class NaiveMatmul2 : public MatmulAlgorithm {
   }
 };
 
-// REGISTER_MATMUL(naive_matmul_multiple_accumulator, NaiveMatmul2);
+REGISTER_MATMUL(naive_matmul_multiple_accumulator, NaiveMatmul2);
 
 /**
  * use loop unroll
@@ -96,7 +97,7 @@ class NaiveMatmul3 : public MatmulAlgorithm {
   }
 };
 
-// REGISTER_MATMUL(naive_matmul_loop_unrool, NaiveMatmul3);
+REGISTER_MATMUL(naive_matmul_loop_unrool, NaiveMatmul3);
 
 
 /**
@@ -321,9 +322,9 @@ class NaiveMatmul7 : public MatmulAlgorithm {
  public:
   virtual void Matmul(int m, int k, int n, float* a, float* b, float* out) {
     int x = 0;
-    for (; x < m; x += 4) {
+    for (; x < m - 3; x += 4) {
       int y = 0;
-      for (; y < n; y += 4) {
+      for (; y < n - 3; y += 4) {
         __m128 sum0 = _mm_set1_ps(0), sum1 = _mm_set1_ps(0),
                sum2 = _mm_set1_ps(0), sum3 = _mm_set1_ps(0);
         for (int z = 0; z < k; ++z) {
