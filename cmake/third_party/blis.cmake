@@ -13,7 +13,8 @@ set(BLIS_BUILD cd ${BLIS_ROOT_DIR}/src/blis && $(MAKE))
 set(BLIS_TEST cd ${BLIS_ROOT_DIR}/src/blis && $(MAKE) check)
 set(BLIS_INSTALL cd ${BLIS_ROOT_DIR}/src/blis && $(MAKE) install)
 
-include_directories(${BLIS_INCLUDE_DIR})
+# use SYSTEM directives to disable warning
+include_directories(SYSTEM ${BLIS_INCLUDE_DIR})
 set(BLIS_LIBRARY_NAMES
     libblis.a)
 foreach(LIBRARY_NAME ${BLIS_LIBRARY_NAMES})
